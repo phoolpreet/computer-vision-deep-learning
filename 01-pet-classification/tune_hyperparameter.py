@@ -121,7 +121,11 @@ def objective(trial):
 
         best_val_acc = max(best_val_acc, val_acc)
 
-        print(f"Trial={trial.number} | " f"Epoch={epoch+1} | " f"Val Acc={val_acc:.4f}")
+        print(
+            f"Trial={trial.number} | ",
+            f"Epoch={epoch+1} | ",
+            f"Val Acc={val_acc:.4f}",
+        )
 
     return best_val_acc
 
