@@ -1,7 +1,6 @@
 import os
 
 import torch
-
 from configs import config
 from datasets.oxford_pet import get_dataloaders
 from engine import evaluate

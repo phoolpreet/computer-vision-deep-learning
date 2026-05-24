@@ -2,7 +2,6 @@ import os
 
 import torch
 import torch.optim.lr_scheduler as lr_scheduler
-
 from configs import config
 from datasets.oxford_pet import get_dataloaders
 from engine.evaluate import evaluate
