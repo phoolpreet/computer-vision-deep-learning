@@ -22,8 +22,8 @@ def training(model, train_loader, val_loader):
     train_losses = []
     val_losses = []
 
-    criterion = torch.nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=initial_learning_rate)
+    criterion = torch.nn.CrossEntropyLoss(label_smoothing=0.1)
+    optimizer = torch.optim.Adam(model.parameters(), lr=initial_learning_rate, weight_decay=1e-4)
     scheduler = lr_scheduler.OneCycleLR(
         optimizer, max_lr=max_lr, total_steps=len(train_loader) * num_epochs
     )

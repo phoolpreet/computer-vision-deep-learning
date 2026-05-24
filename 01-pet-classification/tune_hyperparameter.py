@@ -18,17 +18,17 @@ def objective(trial):
     learning_rate = trial.suggest_float(
         "learning_rate",
         1e-5,
-        1e-2,
+        1e-3,
         log=True,
     )
 
     batch_size = trial.suggest_categorical(
         "batch_size",
-        [8, 16, 32, 64],
+        [16, 32, 64],
     )
     max_lr = trial.suggest_float(
         "max_lr",
-        1e-4,
+        1e-3,
         1e-1,
         log=True,
     )

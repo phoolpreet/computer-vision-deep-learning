@@ -14,16 +14,18 @@ class PetClassifierResNet(nn.Module):
         # print(len(list(self.backbone.named_parameters())))
 
         # Freeze the early layers
-        for param in list(self.backbone.parameters())[:-20]:
+        for param in list(self.backbone.parameters())[:-10]:
             param.requires_grad = False
+        # for param in list(self.backbone.parameters()):
+        #     param.requires_grad = False
 
         num_features = self.backbone.fc.in_features
         self.backbone.fc = nn.Sequential(
             nn.Dropout(dropout),
-            nn.Linear(num_features, 256),  # New hidden layer with 256 units
+            nn.Linear(num_features, 128),  # New hidden layer with 256 units
             nn.ReLU(),  # Activation function for the hidden layer
             nn.Dropout(dropout),
-            nn.Linear(256, num_classes),  # Output layer
+            nn.Linear(128, num_classes),  # Output layer
         )
 
     def forward(self, x):
