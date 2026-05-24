@@ -51,7 +51,9 @@ def training(model, train_loader, val_loader):
 
         print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.4f}")
         print(
-            f"Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.4f}, Val Precision: {val_precision:.4f}, Val Recall: {val_recall:.4f}"
+            f"Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.4f}, ",
+            f"Val Precision: {val_precision:.4f}, ",
+            f"Val Recall: {val_recall:.4f} ",
         )
 
         train_losses.append(train_loss)

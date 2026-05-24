@@ -26,8 +26,16 @@ def evaluate(model, dataloader, criterion, device):
     # Calculate metrics
     epoch_loss = running_loss / len(dataloader.dataset)
     epoch_acc = metrics.accuracy_score(all_labels, all_preds)
-    epoch_precision = metrics.precision_score(all_labels, all_preds, average="weighted")
-    epoch_recall = metrics.recall_score(all_labels, all_preds, average="weighted")
+    epoch_precision = metrics.precision_score(
+        all_labels,
+        all_preds,
+        average="weighted",
+    )
+    epoch_recall = metrics.recall_score(
+        all_labels,
+        all_preds,
+        average="weighted",
+    )
     cm = metrics.confusion_matrix(all_labels, all_preds)
 
     return (
