@@ -1,0 +1,13 @@
+BATCH_SIZE = 32
+NUM_EPOCHS = 20
+
+IMAGE_SIZE = 224
+
+LEARNING_RATE = 1e-4
+MAX_LR = 1e-3
+
+NUM_CLASSES = 37  # oxford pet dataset
+
+SEED = 42
+
+OUTPUT_PATH = "outputs"

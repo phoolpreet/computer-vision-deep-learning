@@ -1,3 +1,12 @@
+*.pth
+*.pt
+weights
+temp
+ram
+data
+wandb
+outputs
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
