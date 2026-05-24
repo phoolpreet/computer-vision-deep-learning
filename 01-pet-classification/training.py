@@ -1,8 +1,7 @@
 import os
 
 import torch
-from torch import nn, optim
-from torch.optim.lr_scheduler import OneCycleLR
+import torch.optim.lr_scheduler as lr_scheduler
 
 from configs import config
 from datasets.oxford_pet import get_dataloaders
@@ -22,9 +21,9 @@ def training(model, train_loader, val_loader):
     train_losses = []
     val_losses = []
 
-    criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=initial_learning_rate)
-    scheduler = OneCycleLR(
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=initial_learning_rate)
+    scheduler = lr_scheduler.OneCycleLR(
         optimizer, max_lr=max_lr, total_steps=len(train_loader) * num_epochs
     )
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

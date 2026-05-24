@@ -1,7 +1,6 @@
 import os
 
 import torch
-from torch import nn
 
 from configs import config
 from datasets.oxford_pet import get_dataloaders
@@ -11,7 +10,7 @@ from utils import checkpoint
 
 
 def evaluation(model, test_loader):
-    criterion = nn.CrossEntropyLoss()
+    criterion = torch.nn.CrossEntropyLoss()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = model.to(device)
     (
