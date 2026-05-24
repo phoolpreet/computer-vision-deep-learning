@@ -4,7 +4,7 @@ from torchvision import models
 
 
 class PetClassifierResNet(nn.Module):
-    def __init__(self, num_classes=37):
+    def __init__(self, num_classes=37, dropout=0.25):
         super(PetClassifierResNet, self).__init__()
         # Load a pre-trained ResNet18 model
         self.backbone = models.resnet18(weights="IMAGENET1K_V1")
@@ -19,10 +19,10 @@ class PetClassifierResNet(nn.Module):
 
         num_features = self.backbone.fc.in_features
         self.backbone.fc = nn.Sequential(
-            nn.Dropout(0.25),
+            nn.Dropout(dropout),
             nn.Linear(num_features, 256),  # New hidden layer with 256 units
             nn.ReLU(),  # Activation function for the hidden layer
-            nn.Dropout(0.25),
+            nn.Dropout(dropout),
             nn.Linear(256, num_classes),  # Output layer
         )
 

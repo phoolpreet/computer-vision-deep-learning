@@ -32,8 +32,9 @@ def evaluation(model, test_loader):
 if __name__ == "__main__":
     pet_classifier = PetClassifierResNet()
     output_path = config.OUTPUT_PATH
+    batch_size = config.BATCH_SIZE
     checkpoint.load_checkpoint(
         pet_classifier, os.path.join(output_path, "best_model.pth")
     )
-    train_loader, val_loader, test_loader = get_dataloaders()
+    train_loader, val_loader, test_loader = get_dataloaders(batch_size)
     evaluation(pet_classifier, test_loader)

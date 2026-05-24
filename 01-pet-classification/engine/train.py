@@ -18,13 +18,14 @@ def train_epoch(model, dataloader, criterion, optimizer, scheduler, device):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        scheduler.step()
 
         # Statistics
         running_loss += loss.item() * inputs.size(0)
         _, predicted = torch.max(outputs, 1)
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
+
+    scheduler.step()
 
     epoch_loss = running_loss / total
     epoch_acc = correct / total

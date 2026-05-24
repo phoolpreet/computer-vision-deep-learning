@@ -55,25 +55,25 @@ def get_datasets():
     return train_dataset, val_dataset, test_dataset
 
 
-def get_dataloaders():
+def get_dataloaders(batch_size):
     train_dataset, val_dataset, test_dataset = get_datasets()
     train_loader = DataLoader(
         train_dataset,
-        batch_size=32,
+        batch_size=batch_size,
         drop_last=True,
         shuffle=True,
         num_workers=4,
     )
     val_loader = DataLoader(
         val_dataset,
-        batch_size=32,
+        batch_size=batch_size,
         drop_last=True,
         shuffle=False,
         num_workers=4,
     )
     test_loader = DataLoader(
         test_dataset,
-        batch_size=32,
+        batch_size=batch_size,
         drop_last=True,
         shuffle=False,
         num_workers=4,

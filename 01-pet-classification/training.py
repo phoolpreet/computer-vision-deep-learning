@@ -13,6 +13,8 @@ num_epochs = config.NUM_EPOCHS
 initial_learning_rate = config.LEARNING_RATE
 output_path = config.OUTPUT_PATH
 max_lr = config.MAX_LR
+dropout = config.DROPOUT
+batch_size = config.BATCH_SIZE
 
 
 def training(model, train_loader, val_loader):
@@ -71,7 +73,7 @@ def training(model, train_loader, val_loader):
 
 
 if __name__ == "__main__":
-    model = PetClassifierResNet()
-    train_loader, val_loader, test_loader = get_dataloaders()
+    model = PetClassifierResNet(dropout=dropout)
+    train_loader, val_loader, test_loader = get_dataloaders(batch_size)
     train_losses, val_losses = training(model, train_loader, val_loader)
     visualization.plot_losses(train_losses, val_losses)
