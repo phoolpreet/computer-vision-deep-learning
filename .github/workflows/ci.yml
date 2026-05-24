@@ -21,7 +21,7 @@ jobs:
       
       - name: Install tools
         run: |
-          pip install black isort flake8 mypy pytest
+          pip install black isort==5.6.4 flake8 mypy pytest
       
       - name: Run Black
         run: |
