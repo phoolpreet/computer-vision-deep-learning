@@ -6,8 +6,10 @@ from torchvision import models
 class PetClassifierResNet(nn.Module):
     def __init__(self, num_classes=37, dropout=0.25):
         super(PetClassifierResNet, self).__init__()
-        # Load a pre-trained ResNet18 model
-        self.backbone = models.resnet18(weights="IMAGENET1K_V1")
+        # Load a pre-trained ResNet model
+        # self.backbone = models.resnet18(weights="IMAGENET1K_V1")
+        self.backbone = models.resnet50(weights="DEFAULT")
+        # self.backbone = models.resnet152(weights="DEFAULT")
 
         # for name, param in self.backbone.named_parameters():
         # print(name, param.shape)

@@ -2,6 +2,8 @@ import os
 
 import torch
 import torch.optim.lr_scheduler as lr_scheduler
+from torch.utils.tensorboard import SummaryWriter
+
 from configs import config
 from datasets.oxford_pet import get_dataloaders
 from engine.evaluate import evaluate
@@ -17,13 +19,18 @@ dropout = config.DROPOUT
 batch_size = config.BATCH_SIZE
 
 
-def training(model, train_loader, val_loader):
+def training(model, train_loader, val_loader, log_dir="log"):
+
+    writer = SummaryWriter(log_dir=os.path.join(output_path, log_dir))
+
     best_val_loss = float("inf")
     train_losses = []
     val_losses = []
 
     criterion = torch.nn.CrossEntropyLoss(label_smoothing=0.1)
-    optimizer = torch.optim.Adam(model.parameters(), lr=initial_learning_rate, weight_decay=1e-4)
+    optimizer = torch.optim.Adam(
+        model.parameters(), lr=initial_learning_rate, weight_decay=1e-4
+    )
     scheduler = lr_scheduler.OneCycleLR(
         optimizer, max_lr=max_lr, total_steps=len(train_loader) * num_epochs
     )
@@ -68,6 +75,20 @@ def training(model, train_loader, val_loader):
             checkpoint.save_checkpoint(
                 model, os.path.join(output_path, "best_model.pth")
             )
+
+        writer.add_scalar("Loss/Train", train_loss, epoch)
+        writer.add_scalar("Loss/Validation", val_loss, epoch)
+
+        writer.add_scalar("Accuracy/Train", train_acc, epoch)
+        writer.add_scalar("Accuracy/Validation", val_acc, epoch)
+
+        writer.add_scalar("Precision/Validation", val_precision, epoch)
+        writer.add_scalar("Recall/Validation", val_recall, epoch)
+
+        current_lr = optimizer.param_groups[0]["lr"]
+        writer.add_scalar("LearningRate", current_lr, epoch)
+
+    writer.close()
 
     return train_losses, val_losses
 
