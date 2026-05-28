@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class DatasetConfig:
+class PetDatasetConfig:
     image_size: int = 224
     batch_size: int = 32
     num_workers: int = min(8, os.cpu_count())
@@ -11,16 +11,17 @@ class DatasetConfig:
     seed: int = 42
     pin_memory: bool = True
     persistent_workers: bool = True
+    num_classes = 37  # oxford pet dataset
+
 
 
 @dataclass
 class ModelConfig:
-    num_epochs = 10
+    num_epochs = 30
     learning_rate = 0.001
     max_lr = 0.0015
     weight_decay: float = 1.0e-4
     dropout = 0.4
-    num_classes = 37  # oxford pet dataset
     seed = 42
     output_path = "outputs"
 

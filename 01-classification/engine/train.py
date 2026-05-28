@@ -1,25 +1,63 @@
 import os
 
 import torch
-import torch.optim.lr_scheduler as lr_scheduler
+from engine.evaluate import evaluate
 from torch.utils.tensorboard import SummaryWriter
 
-from configs import config
-from datasets.oxford_pet import get_dataloaders
-from engine.evaluate import evaluate
-from engine.train import train_epoch
-from models.pet_classifier_resnet import PetClassifierResNet
-from utils import checkpoint, visualization
-
-num_epochs = config.NUM_EPOCHS
-initial_learning_rate = config.LEARNING_RATE
-output_path = config.OUTPUT_PATH
-max_lr = config.MAX_LR
-dropout = config.DROPOUT
-batch_size = config.BATCH_SIZE
+from utils import checkpoint
 
 
-def training(model, train_loader, val_loader, log_dir="log"):
+def train_epoch(
+    model,
+    dataloader,
+    loss_fn,
+    optimizer,
+    scheduler,
+    device,
+):
+    model.train()
+    running_loss = 0.0
+    correct = 0
+    total = 0
+
+    for inputs, labels in dataloader:
+        inputs, labels = inputs.to(device), labels.to(device)
+
+        # Forward pass
+        outputs = model(inputs)
+        loss = loss_fn(outputs, labels)
+
+        # Backward pass and optimize
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        # Statistics
+        running_loss += loss.item() * inputs.size(0)
+        _, predicted = torch.max(outputs, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+
+        scheduler.step()
+
+    epoch_loss = running_loss / total
+    epoch_acc = correct / total
+
+    return epoch_loss, epoch_acc
+
+
+
+def train(
+    model,
+    train_loader,
+    val_loader,
+    loss_fn,
+    optimizer,
+    scheduler,
+    num_epochs,
+    output_path,
+    log_dir="log",
+):
 
     writer = SummaryWriter(log_dir=os.path.join(output_path, log_dir))
 
@@ -27,13 +65,6 @@ def training(model, train_loader, val_loader, log_dir="log"):
     train_losses = []
     val_losses = []
 
-    criterion = torch.nn.CrossEntropyLoss(label_smoothing=0.1)
-    optimizer = torch.optim.Adam(
-        model.parameters(), lr=initial_learning_rate, weight_decay=1e-4
-    )
-    scheduler = lr_scheduler.OneCycleLR(
-        optimizer, max_lr=max_lr, total_steps=len(train_loader) * num_epochs
-    )
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = model.to(device)
 
@@ -44,7 +75,7 @@ def training(model, train_loader, val_loader, log_dir="log"):
         train_loss, train_acc = train_epoch(
             model,
             train_loader,
-            criterion,
+            loss_fn,
             optimizer,
             scheduler,
             device,
@@ -54,7 +85,7 @@ def training(model, train_loader, val_loader, log_dir="log"):
         val_loss, val_acc, val_precision, val_recall, val_cm, _, _ = evaluate(
             model,
             val_loader,
-            criterion,
+            loss_fn,
             device,
         )
 
@@ -91,10 +122,3 @@ def training(model, train_loader, val_loader, log_dir="log"):
     writer.close()
 
     return train_losses, val_losses
-
-
-if __name__ == "__main__":
-    model = PetClassifierResNet(dropout=dropout)
-    train_loader, val_loader, test_loader = get_dataloaders(batch_size)
-    train_losses, val_losses = training(model, train_loader, val_loader)
-    visualization.plot_losses(train_losses, val_losses)

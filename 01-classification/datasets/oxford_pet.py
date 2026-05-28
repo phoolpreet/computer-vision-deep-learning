@@ -1,9 +1,11 @@
+from dataclasses import dataclass
+
 import torch
 from torch.utils.data import DataLoader, random_split
 from torchvision.datasets import OxfordIIITPet
 from torchvision.transforms import v2 as transforms
 
-from configs import config
+from configs import config as CONFIG
 
 # =========================================================
 # TRANSFORMS
@@ -13,7 +15,9 @@ IMAGENET_MEAN = [0.485, 0.456, 0.406]
 IMAGENET_STD = [0.229, 0.224, 0.225]
 
 
-def get_train_transforms(image_size: int):
+def get_train_transforms():
+    config = CONFIG.PetDatasetConfig()
+    image_size = config.image_size
 
     return transforms.Compose(
         [
@@ -45,7 +49,10 @@ def get_train_transforms(image_size: int):
 # =========================================================
 
 
-def get_eval_transforms(image_size: int):
+def get_eval_transforms():
+
+    config = CONFIG.PetDatasetConfig()
+    image_size = config.image_size
 
     return transforms.Compose(
         [
@@ -57,9 +64,13 @@ def get_eval_transforms(image_size: int):
     )
 
 
-def get_datasets(config: config.DatasetConfig):
-    train_transform = get_train_transforms(config.image_size)
-    eval_transform = get_eval_transforms(config.image_size)
+def get_datasets():
+    config = CONFIG.PetDatasetConfig()
+    train_split = config.train_split
+    seed = config.seed
+
+    train_transform = get_train_transforms()
+    eval_transform = get_eval_transforms()
     full_train_dataset = OxfordIIITPet(
         root="./data",
         split="trainval",
@@ -82,10 +93,10 @@ def get_datasets(config: config.DatasetConfig):
         transform=eval_transform,
     )
 
-    train_size = int(config.train_split * len(full_train_dataset))
+    train_size = int(train_split * len(full_train_dataset))
     val_size = len(full_train_dataset) - train_size
 
-    generator = torch.Generator().manual_seed(config.seed)
+    generator = torch.Generator().manual_seed(seed)
 
     train_indices, val_indices = random_split(
         range(len(full_train_dataset)),
@@ -106,27 +117,40 @@ def get_datasets(config: config.DatasetConfig):
     return train_dataset, val_dataset, test_dataset
 
 
-def get_dataloaders(batch_size, image_size):
-    train_dataset, val_dataset, test_dataset = get_datasets(image_size)
+def get_dataloaders():
+
+    config = CONFIG.PetDatasetConfig()
+    batch_size = config.batch_size
+    num_workers = config.num_workers
+    pin_memory = config.pin_memory
+    persistent_workers = config.persistent_workers
+
+    train_dataset, val_dataset, test_dataset = get_datasets()
     train_loader = DataLoader(
         train_dataset,
         batch_size=batch_size,
         drop_last=True,
         shuffle=True,
-        num_workers=4,
+        num_workers=num_workers,
+        pin_memory=pin_memory,
+        persistent_workers=persistent_workers,
     )
     val_loader = DataLoader(
         val_dataset,
         batch_size=batch_size,
         drop_last=True,
         shuffle=False,
-        num_workers=4,
+        num_workers=num_workers,
+        pin_memory=pin_memory,
+        persistent_workers=persistent_workers,
     )
     test_loader = DataLoader(
         test_dataset,
         batch_size=batch_size,
         drop_last=True,
         shuffle=False,
-        num_workers=4,
+        num_workers=num_workers,
+        pin_memory=pin_memory,
+        persistent_workers=persistent_workers,
     )
     return train_loader, val_loader, test_loader

@@ -2,11 +2,17 @@ import torch
 from sklearn import metrics
 
 
-def evaluate(model, dataloader, criterion, device):
+def evaluate(
+    model,
+    dataloader,
+    loss_fn,
+    device
+):
     model.eval()
     running_loss = 0.0
     all_preds = []
     all_labels = []
+
 
     with torch.inference_mode():
         for inputs, labels in dataloader:
@@ -14,7 +20,7 @@ def evaluate(model, dataloader, criterion, device):
 
             # Forward pass
             outputs = model(inputs)
-            loss = criterion(outputs, labels)
+            loss = loss_fn(outputs, labels)
 
             # Statistics
             running_loss += loss.item() * inputs.size(0)

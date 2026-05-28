@@ -3,23 +3,16 @@ from torch import nn
 from torchvision import models
 
 
-class PetClassifierResNet(nn.Module):
+class ClassifierResNet(nn.Module):
     def __init__(self, num_classes=37, dropout=0.25):
-        super(PetClassifierResNet, self).__init__()
+        super(ClassifierResNet, self).__init__()
         # Load a pre-trained ResNet model
-        # self.backbone = models.resnet18(weights="IMAGENET1K_V1")
         self.backbone = models.resnet50(weights="DEFAULT")
-        # self.backbone = models.resnet152(weights="DEFAULT")
 
-        # for name, param in self.backbone.named_parameters():
-        # print(name, param.shape)
-        # print(len(list(self.backbone.named_parameters())))
 
         # Freeze the early layers
         for param in list(self.backbone.parameters())[:-10]:
             param.requires_grad = False
-        # for param in list(self.backbone.parameters()):
-        #     param.requires_grad = False
 
         num_features = self.backbone.fc.in_features
         self.backbone.fc = nn.Sequential(

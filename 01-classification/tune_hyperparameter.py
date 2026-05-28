@@ -6,7 +6,7 @@ import torch.optim.lr_scheduler as lr_scheduler
 from datasets.oxford_pet import get_dataloaders
 from engine.evaluate import evaluate
 from engine.train import train_epoch
-from models.pet_classifier_resnet import PetClassifierResNet
+from models.classifier_resnet import ClassifierResNet
 
 NUM_EPOCHS = 10  # keep small during tuning
 
@@ -56,7 +56,7 @@ def objective(trial):
     # Model
     # =========================
 
-    model = PetClassifierResNet(dropout=dropout).to(device)
+    model = ClassifierResNet(dropout=dropout).to(device)
 
     # =========================
     # Loss / Optimizer
