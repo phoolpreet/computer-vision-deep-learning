@@ -7,23 +7,24 @@ class ClassifierMobileNet(nn.Module):
         super(ClassifierMobileNet, self).__init__()
 
         # Load pretrained MobileNetV2
-        self.backbone = models.mobilenet_v2(weights="DEFAULT")
+        # self.backbone = models.mobilenet_v2(weights="DEFAULT")
+        self.backbone = models.mobilenet_v3_large(weights="DEFAULT")
 
         # Freeze early layers
-        # for param in list(self.backbone.parameters())[:-10]:
-        #     # print(param.names)
-        #     param.requires_grad = False
+        for param in list(self.backbone.parameters())[:-10]:
+            # print(param.names)
+            param.requires_grad = False
 
         # Get input features of classifier
-        num_features = self.backbone.classifier[1].in_features
+        num_features = self.backbone.classifier[0].in_features
 
         # Replace classifier head
         self.backbone.classifier = nn.Sequential(
             nn.Dropout(dropout),
-            nn.Linear(num_features, 128),
-            nn.ReLU(),
+            nn.Linear(num_features, 512),
+            nn.Hardswish(),
             nn.Dropout(dropout),
-            nn.Linear(128, num_classes),
+            nn.Linear(512, num_classes),
         )
 
     def forward(self, x):

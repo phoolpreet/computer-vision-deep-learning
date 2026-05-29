@@ -117,13 +117,7 @@ def get_datasets():
     return train_dataset, val_dataset, test_dataset
 
 
-def get_dataloaders():
-
-    config = CONFIG.PetDatasetConfig()
-    batch_size = config.batch_size
-    num_workers = config.num_workers
-    pin_memory = config.pin_memory
-    persistent_workers = config.persistent_workers
+def get_dataloaders(batch_size):
 
     train_dataset, val_dataset, test_dataset = get_datasets()
     train_loader = DataLoader(
@@ -131,26 +125,17 @@ def get_dataloaders():
         batch_size=batch_size,
         drop_last=True,
         shuffle=True,
-        num_workers=num_workers,
-        pin_memory=pin_memory,
-        persistent_workers=persistent_workers,
     )
     val_loader = DataLoader(
         val_dataset,
         batch_size=batch_size,
         drop_last=True,
         shuffle=False,
-        num_workers=num_workers,
-        pin_memory=pin_memory,
-        persistent_workers=persistent_workers,
     )
     test_loader = DataLoader(
         test_dataset,
         batch_size=batch_size,
         drop_last=True,
         shuffle=False,
-        num_workers=num_workers,
-        pin_memory=pin_memory,
-        persistent_workers=persistent_workers,
     )
     return train_loader, val_loader, test_loader
